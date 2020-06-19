@@ -7,7 +7,7 @@ import sys
 import json
 
 from spotipy.oauth2 import SpotifyClientCredentials
-client_credentials_manager = SpotifyClientCredentials()
+client_credentials_manager = SpotifyClientCredentials(client_id='e1405c68ea3f436dbc1975628118e10a', client_secret='5412d89cfd9647a6939fe8f6918873b9')
 sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 sp.trace = True
 
