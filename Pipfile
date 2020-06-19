@@ -6,6 +6,11 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+flask = "*"
+flask-sqlalchemy = "*"
+flask-migrate = "*"
+spotipy = "*"
+flask-session = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.7"
