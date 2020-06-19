@@ -11,6 +11,8 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 spotipy = "*"
 flask-session = "*"
+python-dotenv = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
