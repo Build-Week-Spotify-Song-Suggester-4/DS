@@ -1,4 +1,7 @@
-# return a recommended artist based on Spotify API's feature tracks, and an input of artist name
+# Provided an input artist; returns 20 tracks based on Spotify API's audio features.
+# see API docs for get-recommendations: https://developer.spotify.com/documentation/web-api/reference/browse/get-recommendations/ 
+# to run from terminal enter the following command: 'python artistreco.py -a/--YOURARTIST
+
 import argparse
 import logging
 import os

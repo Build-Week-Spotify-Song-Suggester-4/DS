@@ -16,11 +16,11 @@ sp.trace = True
 
 
 # code below is to pull acoustic FEATURES of tracks of a given artist. # confirmed working
-
+"""
 if len(sys.argv) > 1:
     artist_name = ' '.join(sys.argv[1:])
 else:
-    artist_name = 'weezer' #can add as many artists as we want, but max limit in search query is 50
+    artist_name = 'weezer' #can add as many artists as we want, but max limit in search query is 50 tracks
 
 results = sp.search(q=artist_name, limit=50) #max is 50 per query
 tids = []
@@ -39,12 +39,12 @@ for feature in features:
     #print(json.dumps(analysis, indent=4))
     #print()
 print (f'features retrieved in {delta} for {len(tids)} songs')
-
+"""
 
 # code below is to pull acoustic FEATURES of a specified track (1). # confirmed working
-"""
-tids='spotify:track:4TTV7EcfroSLWzXRY6gLv6'
 
+#test: tids='spotify:track:4TTV7EcfroSLWzXRY6gLv6'
+tids='62bOmKYxYg7dhrC6gH9vFn'
 if len(sys.argv) > 1:
     tids = sys.argv[1:]
     print(tids)
@@ -53,8 +53,9 @@ start = time.time()
 features = sp.audio_features(tids)
 delta = time.time() - start
 print(json.dumps(features, indent=4))
+# example code to pull individual features: print(features[0]['key'])
 print("features retrieved in %.2f seconds" % (delta,))
-"""
+
 
 
 #code below is to search for songs by artist. #confirmed working
