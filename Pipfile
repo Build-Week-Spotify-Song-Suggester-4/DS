@@ -11,6 +11,10 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 spotipy = "*"
 flask-session = "*"
+python-dotenv = "*"
+requests = "*"
+bs4 = "*"
+fuzzysearch = "*"
 
 [requires]
 python_version = "3.7"
