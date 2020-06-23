@@ -25,10 +25,9 @@ class Track(db.Model):
     liveness = db.Column(db.Float)
     valence = db.Column(db.Float)
     tempo = db.Column(db.Float)
-    type = db.Column(db.String)
     uri = db.Column(db.String)
     track_href = db.Column(db.String)
     duration_ms = db.Column(db.Integer)
     time_signature = db.Column(db.Float)
 
-    user = db.relationship("Artist", backref=db.backref("tracks", lazy=True))
+    #user = db.relationship("Artist", backref=db.backref("tracks", lazy=True))
