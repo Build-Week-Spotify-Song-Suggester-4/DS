@@ -7,6 +7,9 @@ from services.pulldata import sp
 import json
 import time
 import sys
+import logging
+logger = logging.getLogger()
+logging.basicConfig(level='INFO')
 
 #user_input_route=Blueprint("user_input_route", __name__) #not sure if we need this yet
 
@@ -35,12 +38,19 @@ class Track(db.Model):
     duration_ms = db.Column(db.Integer)
     time_signature = db.Column(db.Float)
 
-#@user_input_route.route("/<track_id>")
+search_str = """The Scientist Cold Play""" #NEED TO INTERFACE WITH FRONT END TO GET THE USER INPUT
+# run search query and return top result only (if usery query is 'ARTIST SONG' this will work)
+result = sp.search(q=search_str, type='track', limit=1)
+#print(type(result)) ->dict
+track_id = result['tracks']['items'][0]['id']
+features = sp.audio_features(track_id)
+track_uri = features[0]['uri']
+
 
 @APP.route('/test')
 def get_track_features():
 
-    search_str = """Taylor Swift Trouble""" #NEED TO INTERFACE WITH FRONT END TO GET THE USER INPUT
+    search_str = """The Scientist Cold Play""" #NEED TO INTERFACE WITH FRONT END TO GET THE USER INPUT
     # run search query and return top result only (if usery query is 'ARTIST SONG' this will work)
     result = sp.search(q=search_str, type='track', limit=1)
     pprint(result)
@@ -81,4 +91,26 @@ def get_track_features():
     print("________________")
     db.session.commit()
     return "User Track added to DB"
+
+@APP.route('/suggest')
+
+def get_track_suggestions():
+    recommendations = sp.recommendations(limit=7, seed_tracks = [track_id])
+    print (type(track_id))
+    print (track_id)
+    pprint (recommendations['tracks'])
+    recommended_tracks = recommendations['tracks']
+    TOP_recommended_track_name = recommended_tracks[0]['name'] #returns top result track name
+    top7_recos = [t['name']for t in recommended_tracks] # a list of top 7 recommended track names
+    pprint (top7_recos)
+    #to get a dictionary result:
+    keys=['recommendation 1:', 'recommendation 2:', 'recommendation 3:', 'recommendation 4:', 'recommendation 5:', 'recommendation 6:', 'recommendation 7:']
+    dict_top7=dict(zip(keys, top7_recos))
+    print(dict_top7)
+    # to retun json:
+    top7_recos_json = json.dumps(dict_top7)
+    print(top7_recos_json)
+    return top7_recos_json
+
+
 
