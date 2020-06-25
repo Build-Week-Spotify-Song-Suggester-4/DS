@@ -37,6 +37,12 @@ class Track(db.Model):
     track_href = db.Column(db.String)
     duration_ms = db.Column(db.Integer)
     time_signature = db.Column(db.Float)
+"""
+class Reco(db.Model):
+    __tablename__= "recommendations"
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+"""    
 
 search_str = """The Scientist Cold Play""" #NEED TO INTERFACE WITH FRONT END TO GET THE USER INPUT
 # run search query and return top result only (if usery query is 'ARTIST SONG' this will work)
@@ -112,16 +118,24 @@ def get_track_suggestions():
     print(top7_recos_json)
     return top7_recos_json
 
+#################################################################################
+@APP.route('/')
+def user_query():
+    return render_template('user_query.html')
+
+
 @APP.route('/suggestions', methods=['POST']) #returns html page with recos
 
 def get_suggestions():
     print('GETTING SPOTIFY TRACK INFO...')
     print('USER QUERY:', dict(request.form))
 
-    search_str = (request.form['artist_name']+request.form['song_name'])
+    search_str = (request.form['artist_name']+" "+request.form['song_name'])
     result = sp.search(q=search_str, type='track', limit=1)
+    print (search_str)
     #pprint(result)
     #print(type(result)) ->dict
+    
     track_id = result['tracks']['items'][0]['id']
     #print(type(track_id)) ->string
     pprint(track_id)
@@ -129,13 +143,20 @@ def get_suggestions():
     print("GETTING RECOMMENDATIONS...")
     recommendations = sp.recommendations(limit=7, seed_tracks = [track_id])
     recommended_tracks = recommendations['tracks']
+    pprint(recommended_tracks)
     #TOP_recommended_track_name = recommended_tracks[0]['name'] #returns top result track name
     top7_recos = [t['name']for t in recommended_tracks] # a list of top 7 recommended track names
-    recommended_artists = recommended_tracks[0]['artist']
-    top7_artists = [a['artist']for a in recommended_artists]
-    dict_top7=dict(zip(top7_recos, top7_artists))
-    pprint (top7_recos)
-    print(type(top7_recos))
+    #recommended_artists = recommended_tracks[0]['artists']
+    #top7_artists = [a['artists']for a in recommended_artists]
+    keys=['recommendation 1:', 'recommendation 2:', 'recommendation 3:', 'recommendation 4:', 'recommendation 5:', 'recommendation 6:', 'recommendation 7:']
+    #dict_top7=dict(zip(keys, top7_recos))
+    #pprint (top7_recos) list; works!
+    #pprint (dict_top7)
+    #print(type(top7_recos)) ->list
+    #print(type(dict_top7)) -> dict
     return render_template("suggestions.html",
-     recommended_songs=dict_top7)
+    recommended_songs=top7_recos)
 
+if __name__ =='__main__':
+    APP.debug = True
+    APP.run()
