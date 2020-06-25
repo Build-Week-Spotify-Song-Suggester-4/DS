@@ -1,0 +1,22 @@
+
+{% extends "bootstrap_layout.html" %}
+{% set active_page = "suggestions" %}
+
+{% block content %}
+
+    <h2>Listen to these!</h2>
+
+    <p>{{ message }}</p>
+
+    {% if recommended_songs %}
+        <ul>
+        {% for song in recommended_songs %}
+            <li>{{ recommended_songs["top7_recos"] by ["top7_artists"]}}</li>
+        {% endfor %}
+        </ul>
+
+    {% else %}
+        <p>No suggestions found. Song may be too new for its similarities to be mapped out. Try again later.</p>
+    {% endif %}
+
+{% endblock %}

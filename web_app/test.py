@@ -1,6 +1,6 @@
 # takes the user's input (song, gets its track id and audio features, then adds it to a DB)
 from pprint import pprint
-from flask import Flask, Blueprint, jsonify, request
+from flask import Flask, Blueprint, jsonify, request, render_template
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from services.pulldata import sp
@@ -15,7 +15,7 @@ logging.basicConfig(level='INFO')
 
 APP = Flask(__name__)
 migrate = Migrate()
-APP.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///testdb.sqlite3'
+APP.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///spotify_songs.db'
 db = SQLAlchemy(APP)
 db.init_app(APP)
 migrate.init_app(APP, db)
@@ -92,7 +92,7 @@ def get_track_features():
     db.session.commit()
     return "User Track added to DB"
 
-@APP.route('/suggest')
+@APP.route('/suggest') #returns json list of recos
 
 def get_track_suggestions():
     recommendations = sp.recommendations(limit=7, seed_tracks = [track_id])
@@ -100,7 +100,7 @@ def get_track_suggestions():
     print (track_id)
     pprint (recommendations['tracks'])
     recommended_tracks = recommendations['tracks']
-    TOP_recommended_track_name = recommended_tracks[0]['name'] #returns top result track name
+    #TOP_recommended_track_name = recommended_tracks[0]['name'] #returns top result track name
     top7_recos = [t['name']for t in recommended_tracks] # a list of top 7 recommended track names
     pprint (top7_recos)
     #to get a dictionary result:
@@ -112,5 +112,30 @@ def get_track_suggestions():
     print(top7_recos_json)
     return top7_recos_json
 
+@APP.route('/suggestions', methods=['POST']) #returns html page with recos
 
+def get_suggestions():
+    print('GETTING SPOTIFY TRACK INFO...')
+    print('USER QUERY:', dict(request.form))
+
+    search_str = (request.form['artist_name']+request.form['song_name'])
+    result = sp.search(q=search_str, type='track', limit=1)
+    #pprint(result)
+    #print(type(result)) ->dict
+    track_id = result['tracks']['items'][0]['id']
+    #print(type(track_id)) ->string
+    pprint(track_id)
+    print("-----------------")
+    print("GETTING RECOMMENDATIONS...")
+    recommendations = sp.recommendations(limit=7, seed_tracks = [track_id])
+    recommended_tracks = recommendations['tracks']
+    #TOP_recommended_track_name = recommended_tracks[0]['name'] #returns top result track name
+    top7_recos = [t['name']for t in recommended_tracks] # a list of top 7 recommended track names
+    recommended_artists = recommended_tracks[0]['artist']
+    top7_artists = [a['artist']for a in recommended_artists]
+    dict_top7=dict(zip(top7_recos, top7_artists))
+    pprint (top7_recos)
+    print(type(top7_recos))
+    return render_template("suggestions.html",
+     recommended_songs=dict_top7)
 
